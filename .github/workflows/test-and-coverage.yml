@@ -1,0 +1,49 @@
+name: Pester Tests with Coverage
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pester:
+    name: Run Pester Tests + Code Coverage
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Setup PowerShell
+      uses: PowerShell/setup-powershell@v1
+      with:
+        pwsh-version: '7.x'
+
+    - name: Install Pester
+      shell: pwsh
+      run: |
+        Install-Module -Name Pester -Force -SkipPublisherCheck
+
+    - name: Run Pester with Code Coverage
+      shell: pwsh
+      run: |
+        $coveragePaths = @(
+          './Private/*.ps1',
+          './*.psm1'
+        )
+        Invoke-Pester -Configuration @{
+          Run = @{ Path = './Tests' }
+          CodeCoverage = @{
+            Enabled = $true
+            Path = $coveragePaths
+            OutputFormat = 'JaCoCo'
+            OutputPath = './coverage.xml'
+          }
+        }
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage.xml

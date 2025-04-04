@@ -1,0 +1,32 @@
+{
+  "name": "OSDCloudCustomBuilder DevContainer",
+  "image": "mcr.microsoft.com/devcontainers/base:jammy",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/powershell:1": {},
+    "ghcr.io/devcontainers/features/git-lfs:1": {},
+    "ghcr.io/devcontainers-contrib/features/ansible:2.0.17": {},
+    "ghcr.io/devcontainers-contrib/features/act:1": {}
+  },
+  "ssh": true,
+  "dotfiles": "git@github.com:lfayese/OSDCloudCustomBuilder.git",
+  "dotfiles.installCommand": "./install.sh",
+  "dotfiles.targetPath": "~/dotfiles",
+  "onCreateCommand": "pwsh -Command \"Install-Module -Name PSReadLine -Force\"",
+  "postCreateCommand": "pwsh -Command \"Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name PSScriptAnalyzer, Pester, platyPS -Force\"",
+  "workspaceFolder": "/workspaces/OSDCloudCustomBuilder",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.PowerShell",
+        "timonwong.shellcheck",
+        "sonarsource.sonarlint-vscode"
+      ],
+      "settings": {
+        "powershell.scriptAnalysis.enable": true,
+        "powershell.codeFormatting.preset": "OTBS"
+      }
+    }
+  }
+}
