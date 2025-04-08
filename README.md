@@ -6,7 +6,7 @@ A PowerShell module for creating custom OSDCloud ISOs with Windows Image (WIM) f
 
 OSDCloudCustomBuilder enables you to:
 
-- Create bootable custom OSDCloud ISO files with PowerShell 7 integration
+- Create doc custom OSDCloud ISO files with PowerShell 7 integration
 - Customize Windows PE environments for modern deployment scenarios
 - Include organization-specific scripts and tools in your deployment media
 - Generate comprehensive documentation from code comments
