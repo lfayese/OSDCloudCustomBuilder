@@ -1,5 +1,4 @@
 # Patched
-Set-StrictMode -Version Latest
 @{
     RootModule        = 'OSDCloudCustomBuilder.psm1'
     ModuleVersion     = '0.3.0'
