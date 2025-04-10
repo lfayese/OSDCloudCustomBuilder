@@ -25,11 +25,15 @@ RUN mkdir -p /home/vscode/OSDCloud/OS /home/vscode/OSDCloud/Drivers /home/vscode
 
 USER $USERNAME
 
-# Install PowerShell modules
-RUN pwsh -Command 'Set-PSRepository -Name PSGallery -InstallationPolicy Trusted' \
-    && pwsh -Command 'Install-Module -Name OSD, PSWindowsUpdate, WindowsAutoPilot, Microsoft.Graph, WindowsAutopilotIntune -Force -AllowClobber' \
-    && pwsh -Command 'Install-Module -Name Pester -Force -SkipPublisherCheck' \
-    && pwsh -Command 'Install-Module -Name PSScriptAnalyzer -Force -AllowClobber'
+# Install PowerShell modules one by one to isolate failures
+RUN pwsh -Command 'Set-PSRepository -Name PSGallery -InstallationPolicy Trusted'
+RUN pwsh -Command 'Install-Module -Name OSD -Force -AllowClobber -Verbose'
+RUN pwsh -Command 'Install-Module -Name PSWindowsUpdate -Force -AllowClobber -Verbose'
+RUN pwsh -Command 'Install-Module -Name WindowsAutoPilot -Force -AllowClobber -Verbose'
+RUN pwsh -Command 'Install-Module -Name Microsoft.Graph -Force -AllowClobber -Verbose'
+RUN pwsh -Command 'Install-Module -Name WindowsAutopilotIntune -Force -AllowClobber -Verbose' 
+RUN pwsh -Command 'Install-Module -Name Pester -Force -SkipPublisherCheck -Verbose'
+RUN pwsh -Command 'Install-Module -Name PSScriptAnalyzer -Force -AllowClobber -Verbose'
 
 # Set up PowerShell profile
 RUN mkdir -p /home/vscode/.config/powershell \

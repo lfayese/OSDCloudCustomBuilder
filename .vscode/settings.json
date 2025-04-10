@@ -3,5 +3,6 @@
         "Contoso",
         "Pwsh"
     ],
-    "CodeGPT.apiKey": "CodeGPT Plus Beta"
+    "CodeGPT.apiKey": "CodeGPT Plus Beta",
+    "codium.codeCompletion.enable": true
 }
