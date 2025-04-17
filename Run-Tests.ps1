@@ -1,4 +1,4 @@
-# Patched
+# Script for running OSDCloudCustomBuilder tests
 Set-StrictMode -Version Latest
 <#
 .SYNOPSIS

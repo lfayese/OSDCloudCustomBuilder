@@ -99,300 +99,67 @@ function Initialize-ModuleLogging {
                     [string] $Message,
                     [Parameter()]
                     [ValidateSet('Info', 'Warning', 'Error', 'Debug')]
-                    [string] $Level = 'Info'
+                    [string] $Level = 'Info',
+                    [Parameter()]
+                    [string] $Component = 'OSDCloudCustomBuilder'
                 )
-                $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-                $logMessage = "[$timestamp] [$Level] $Message"
+                
+                $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+                $logMessage = "[$timestamp] [$Level] [$Component] $Message"
+                
                 switch ($Level) {
-                    'Info' { Write-Verbose $logMessage }
+                    'Info'    { Write-Host $logMessage }
                     'Warning' { Write-Warning $Message }
-                    'Error' { Write-Error $Message }
-                    'Debug' { Write-Verbose $Message }
+                    'Error'   { Write-Error $Message }
+                    'Debug'   { Write-Debug $logMessage }
+                    default   { Write-Host $logMessage }
                 }
             }
         }
     }
-}
-Initialize-ModuleLogging
-# Validate required modules
-function Test-ModuleDependencies {
-    [OutputType([bool])]
-    [CmdletBinding()]
-    param()
-    
-    $requiredModules = @('OSD')
-    $missingModules = @()
-    
-    foreach ($module in $requiredModules) {
-        if (-not (Get-Module -Name $module -ListAvailable)) {
-            $missingModules += $module
-        }
-    }
-    
-    if ($missingModules.Count -gt 0) {
-        Write-Warning "Required modules not installed: $($missingModules -join ', '). Some features may not work correctly."
-        return $false
-    }
-    
-    return $true
 }
 
-$dependenciesValid = Test-ModuleDependencies
-Write-Verbose "Module dependencies validation result: $dependenciesValid"
-. $PSScriptRoot\Private\Copy-CustomWimToWorkspace.ps1
-. $PSScriptRoot\Private\Copy-FilesInParallel.ps1
-. $PSScriptRoot\Private\Copy-WimFileEfficiently.ps1
-. $PSScriptRoot\Public\Get-PWsh7WrappedContent.ps1
-. $PSScriptRoot\Private\Copy-CustomizationScript.ps1
-. $PSScriptRoot\Private\Enable-OSDCloudTelemetry.ps1
-. $PSScriptRoot\Private\Invoke-TelemetryRetentionPolicy.ps1
-. $PSScriptRoot\Private\Invoke-OSDCloudLogger.ps1
-. $PSScriptRoot\Private\Initialize-BuildEnvironment.ps1
-. $PSScriptRoot\Private\Write-OSDLog.ps1
-. $PSScriptRoot\Private\Initialize-OSDCloudTemplate.ps1
-. $PSScriptRoot\Private\Initialize-OSDEnvironment.ps1
-. $PSScriptRoot\Private\Invoke-WithRetry.ps1
-. $PSScriptRoot\Private\Test-IsAdmin.ps1
-. $PSScriptRoot\Private\Test-ValidPath.ps1
-. $PSScriptRoot\Private\Test-NetworkConnectivity.ps1
-. $PSScriptRoot\Private\Test-WimFileAccessible.ps1
-. $PSScriptRoot\Private\Test-PowerShellVersion.ps1
-. $PSScriptRoot\Private\Write-OSDCloudError.ps1
-. $PSScriptRoot\Private\New-OSDCloudException.ps1
-. $PSScriptRoot\Private\Get-OSDCloudErrors.ps1
-. $PSScriptRoot\Private\Initialize-ModuleConfiguration.ps1
-. $PSScriptRoot\Private\Get-ModuleConfiguration.ps1
-. $PSScriptRoot\Private\Update-ModuleConfiguration.ps1
-. $PSScriptRoot\Private\Reset-ModuleConfiguration.ps1
-. $PSScriptRoot\Private\Initialize-OSDCloudLogging.ps1
-. $PSScriptRoot\Private\Write-OSDCloudLog.ps1
-. $PSScriptRoot\Private\Get-OSDCloudLogStatistics.ps1
-. $PSScriptRoot\Private\Get-OSDCloudLogPath.ps1
-. $PSScriptRoot\Private\Close-OSDCloudLogging.ps1
-. $PSScriptRoot\Private\Test-OSDCloudConfig.ps1
-. $PSScriptRoot\Private\Import-OSDCloudConfig.ps1
-. $PSScriptRoot\Private\Export-OSDCloudConfig.ps1
-. $PSScriptRoot\Private\Merge-OSDCloudConfig.ps1
-. $PSScriptRoot\Private\Get-OSDCloudConfig.ps1
-. $PSScriptRoot\Private\Update-OSDCloudConfig.ps1
-. $PSScriptRoot\Private\Expand-EnvironmentVariables.ps1
-. $PSScriptRoot\Private\Expand-ConfigPaths.ps1
-. $PSScriptRoot\Private\Protect-ConfigValue.ps1
-. $PSScriptRoot\Private\Unprotect-ConfigValue.ps1
-. $PSScriptRoot\Private\Export-SecureOSDCloudConfig.ps1
-. $PSScriptRoot\Private\Import-SecureOSDCloudConfig.ps1
-. $PSScriptRoot\Private\Test-SchemaVersion.ps1
-. $PSScriptRoot\Private\Add-ConfigChangeRecord.ps1
-. $PSScriptRoot\Private\Set-OSDCloudConfigProfile.ps1
-. $PSScriptRoot\Private\Add-PerformanceLogEntry.ps1
-. $PSScriptRoot\Private\Measure-OSDCloudOperation.ps1
-. $PSScriptRoot\Private\Invoke-LogRotation.ps1
-. $PSScriptRoot\Private\New-CustomISO.ps1
-. $PSScriptRoot\Private\Initialize-WinPEMountPoint.ps1
-. $PSScriptRoot\Private\Mount-WinPEImage.ps1
-. $PSScriptRoot\Private\Dismount-WinPEImage.ps1
-. $PSScriptRoot\Private\Install-PowerShell7ToWinPE.ps1
-. $PSScriptRoot\Private\Update-WinPERegistry.ps1
-. $PSScriptRoot\Private\Update-WinPEStartup.ps1
-. $PSScriptRoot\Private\New-WinPEStartupProfile.ps1
-. $PSScriptRoot\Private\Get-PowerShell7Package.ps1
-. $PSScriptRoot\Private\Find-WinPEBootWim.ps1
-. $PSScriptRoot\Private\Remove-WinPETemporaryFiles.ps1
-. $PSScriptRoot\Private\Save-WinPEDiagnostics.ps1
-. $PSScriptRoot\Private\Test-ValidPowerShellVersion.ps1
-. $PSScriptRoot\Private\Update-WinPEWithPowerShell7.ps1
-. $PSScriptRoot\Private\Show-Summary.ps1
-. $PSScriptRoot\Private\Get-CachedPowerShellPackage.ps1
-. $PSScriptRoot\Private\Write-ConfigLog.ps1
-. $PSScriptRoot\Private\MergeHashtables.ps1
-. $PSScriptRoot\Private\ApplyEnvironmentOverrides.ps1
-#endregion Module Setup
+# Call the logging initialization
+Initialize-ModuleLogging
+
 #region Function Import
-# Create collections to track imported functions
-$script:PrivateFunctions = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
-$script:PublicFunctions  = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
-# Function to import a single function file
-function Import-FunctionFile {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [System.IO.FileInfo] $File,
-        [Parameter(Mandatory = $true)]
-        [System.Collections.Generic.HashSet[string]] $FunctionList,
-        [Parameter(Mandatory = $true)]
-        [string] $Type
-    )
+# Import Private Functions
+$PrivateFunctions = @(Get-ChildItem -Path "$PSModuleRoot\Private" -Filter "*.ps1" -Recurse -ErrorAction SilentlyContinue)
+foreach ($Private in $PrivateFunctions) {
     try {
-        . $File.FullName
-        $FunctionList.Add($File.BaseName) | Out-Null
-        Write-Verbose "Imported $Type function: $($File.BaseName)"
+        . $Private.FullName
+        Write-Verbose "Imported private function: $($Private.BaseName)"
     }
     catch {
-        Write-Error "Failed to import $Type function $($File.FullName): $_"
+        Write-Warning "Failed to import private function $($Private.FullName): $_"
     }
 }
-# Auto-Import Functions with parallel handling improvements
-function Import-ModuleFunctions {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string] $Path,
-        [Parameter(Mandatory = $true)]
-        [System.Collections.Generic.HashSet[string]] $FunctionList,
-        [Parameter(Mandatory = $true)]
-        [string] $Type
-    )
-    if (-not (Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
-        Write-Verbose "Path not found: $Path"
-        return
+
+# Import Public Functions
+$PublicFunctions = @(Get-ChildItem -Path "$PSModuleRoot\Public" -Filter "*.ps1" -Recurse -ErrorAction SilentlyContinue)
+foreach ($Public in $PublicFunctions) {
+    try {
+        . $Public.FullName
+        Write-Verbose "Imported public function: $($Public.BaseName)"
     }
-    $files = Get-ChildItem -Path $Path -Filter "*.ps1" -File
-    Write-Verbose "Found $($files.Count) $Type function files in $Path"
-    if ($files.Count -eq 0) { return }
-    # Use parallel processing in PS7+ if file count exceeds threshold (say >5)
-    if ($script:IsPS7OrHigher -and $files.Count -gt 5) {
-        $threadSafeList = [System.Collections.Concurrent.ConcurrentBag[string]]::new()
-        $errorList      = [System.Collections.Concurrent.ConcurrentBag[object]]::new()
-        try {
-            $files | ForEach-Object -Parallel {
-                try {
-                    . $_.FullName
-                    $threadSafeList = $using:threadSafeList
-                    $threadSafeList.Add($_.BaseName) | Out-Null
-                }
-                catch {
-                    $errorList = $using:errorList
-                    $errorList.Add([PSCustomObject]@{ File = $_.FullName; Error = $_ }) | Out-Null
-                }
-            } -ThrottleLimit 16
-            foreach ($item in $threadSafeList) {
-                $FunctionList.Add($item) | Out-Null
-                Write-Verbose "Imported $Type function (cached): $item"
-            }
-            foreach ($errorItem in $errorList) {
-                Write-Error "Failed to import $Type function $($errorItem.File): $($errorItem.Error)"
-            }
-        }
-        catch {
-            Write-Warning "Parallel import failed, falling back to sequential processing: $_"
-            foreach ($file in $files) {
-                Import-FunctionFile -File $file -FunctionList $FunctionList -Type $Type
-            }
-        }
-    }
-    else {
-        foreach ($file in $files) {
-            Import-FunctionFile -File $file -FunctionList $FunctionList -Type $Type
-        }
+    catch {
+        Write-Warning "Failed to import public function $($Public.FullName): $_"
     }
 }
-# Import all function files from Private and Public folders
-$PrivatePath = Join-Path -Path $script:ModuleRoot -ChildPath "Private"
-$PublicPath  = Join-Path -Path $script:ModuleRoot -ChildPath "Public"
-if ([System.IO.Directory]::Exists($PrivatePath)) {
-    Import-ModuleFunctions -Path $PrivatePath -FunctionList $script:PrivateFunctions -Type "Private"
+
+# Export public functions from manifest if available, otherwise export all public functions
+if ($Manifest -and $Manifest.FunctionsToExport) {
+    $FunctionsToExport = $Manifest.FunctionsToExport
 }
-if ([System.IO.Directory]::Exists($PublicPath)) {
-    Import-ModuleFunctions -Path $PublicPath -FunctionList $script:PublicFunctions -Type "Public"
+else {
+    $FunctionsToExport = $PublicFunctions.BaseName
 }
-# Special handling for OSDCloudConfig.ps1 which contains multiple functions
-$OSDCloudConfigFile = Join-Path -Path $PrivatePath -ChildPath "OSDCloudConfig.ps1"
-$OSDCloudConfigFunctions = @('Get-OSDCloudConfig', 'Import-OSDCloudConfig', 'Export-OSDCloudConfig', 'Update-OSDCloudConfig')
-if ([System.IO.File]::Exists($OSDCloudConfigFile)) {
-    foreach ($funcName in $OSDCloudConfigFunctions) {
-        if ((Get-Command -Name $funcName -ErrorAction SilentlyContinue) -and (-not $script:PublicFunctions.Contains($funcName))) {
-            $script:PublicFunctions.Add($funcName) | Out-Null
-            Write-Verbose "Added OSDCloudConfig function to public functions: $funcName"
-        }
-    }
+
+# Export aliases if defined in manifest
+if ($Manifest -and $Manifest.AliasesToExport) {
+    Export-ModuleMember -Function $FunctionsToExport -Alias $Manifest.AliasesToExport
 }
-# Verify required helper functions using the cached lists instead of repeated Get-Command calls
-$RequiredHelpers = [System.Collections.Generic.HashSet[string]]::new(
-    [string[]]@(
-        'Copy-CustomWimToWorkspace', 'Copy-WimFileEfficiently', 'Update-WinPEWithPowerShell7',
-        'Optimize-ISOSize', 'New-CustomISO', 'Show-Summary', 'Get-ModuleConfiguration',
-        'Test-ValidPowerShellVersion', 'Get-CachedPowerShellPackage', 'Write-OSDCloudLog'
-    ),
-    [StringComparer]::OrdinalIgnoreCase
-)
-$MissingHelpers = [System.Collections.Generic.HashSet[string]]::new($RequiredHelpers, [StringComparer]::OrdinalIgnoreCase)
-$MissingHelpers.ExceptWith($script:PrivateFunctions)
-$MissingHelpers.ExceptWith($script:PublicFunctions)
-if ($MissingHelpers.Count -gt 0) {
-    $missingFunctionsMessage = "Missing required helper functions: $($MissingHelpers -join ', ')"
-    Write-Error $missingFunctionsMessage
-    throw $missingFunctionsMessage
+else {
+    Export-ModuleMember -Function $FunctionsToExport
 }
 #endregion Function Import
-#region Module Export
-# Define aliases with proper error handling
-$Aliases = @{
-    'Add-CustomWimWithPwsh7'         = 'Update-CustomWimWithPwsh7'
-    'Customize-WinPEWithPowerShell7' = 'Update-WinPEWithPowerShell7'
-}
-foreach ($alias in $Aliases.Keys) {
-    $target = $Aliases[$alias]
-    if ($script:PublicFunctions.Contains($target) -or (Get-Command -Name $target -ErrorAction SilentlyContinue)) {
-        if (-not (Get-Alias -Name $alias -ErrorAction SilentlyContinue)) {
-            New-Alias -Name $alias -Value $target
-            Write-Verbose "Created alias: $alias -> $target"
-        }
-        else {
-            Write-Verbose "Alias already exists: $alias"
-        }
-    }
-    else {
-        Write-Warning "Cannot create alias '$alias' because target function '$target' does not exist"
-    }
-}
-if ($Manifest) {
-    $ExportFunctions = $Manifest.FunctionsToExport
-    $ValidExportFunctions = @()
-    foreach ($func in $ExportFunctions) {
-        if ($script:PublicFunctions.Contains($func) -or (Get-Command -Name $func -ErrorAction SilentlyContinue)) {
-            $ValidExportFunctions += $func
-        }
-    }
-    if ($ValidExportFunctions.Count -ne $ExportFunctions.Count) {
-        $missingExports = $ExportFunctions | Where-Object { -not ($script:PublicFunctions.Contains($_) -or (Get-Command -Name $_ -ErrorAction SilentlyContinue)) }
-        Write-Warning "Some functions listed in the module manifest don't exist: $([string]::Join(', ', $missingExports))"
-    }
-    $ExportVariables = if ($Manifest.VariablesToExport -contains '*') { @('ModuleVersion') } else { $Manifest.VariablesToExport }
-    $ExportAliases = @($Manifest.AliasesToExport) + @($Aliases.Keys)
-}
-else {
-    $DefaultExports = @(
-        'Update-CustomWimWithPwsh7',
-        'New-CustomOSDCloudISO',
-        'Get-OSDCloudConfig',
-        'Import-OSDCloudConfig',
-        'Export-OSDCloudConfig',
-        'Update-OSDCloudConfig',
-        'Set-OSDCloudCustomBuilderConfig'
-    )
-    $ValidExportFunctions = @()
-    foreach ($func in $DefaultExports) {
-        if ($script:PublicFunctions.Contains($func) -or (Get-Command -Name $func -ErrorAction SilentlyContinue)) {
-            $ValidExportFunctions += $func
-        }
-    }
-    if ($ValidExportFunctions.Count -ne $DefaultExports.Count) {
-        $missingExports = $DefaultExports | Where-Object { -not ($script:PublicFunctions.Contains($_) -or (Get-Command -Name $_ -ErrorAction SilentlyContinue)) }
-        Write-Warning "Some default export functions don't exist: $([string]::Join(', ', $missingExports))"
-    }
-}
-#endregion Module Export
-#region Module Cleanup
-# Register module cleanup on unload if supported
-if ($PSVersionTable.PSVersion.Major -ge 5) {
-    $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
-        Write-Verbose "Unloading OSDCloudCustomBuilder module v$script:ModuleVersion"
-        [System.GC]::Collect()
-    }
-}
-else {
-    [System.GC]::Collect()
-}
-Write-Verbose "OSDCloudCustomBuilder module v$script:ModuleVersion loaded successfully with $($ValidExportFunctions.Count) exported functions"
-#endregion Module Cleanup
-Export-ModuleMember -Function "Get-PWsh7WrappedContent"

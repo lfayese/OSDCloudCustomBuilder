@@ -1,7 +1,13 @@
 {
     "cSpell.words": [
+        "amazonwebservices",
+        "AWSCLI",
+        "azurecli",
         "Contoso",
-        "Pwsh"
+        "dpkg",
+        "iputils",
+        "Pwsh",
+        "usermod"
     ],
     "CodeGPT.apiKey": "CodeGPT Plus Beta",
     "codium.codeCompletion.enable": true

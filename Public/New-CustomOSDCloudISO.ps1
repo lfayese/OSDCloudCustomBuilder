@@ -3,8 +3,8 @@ Set-StrictMode -Version Latest
 function New-CustomOSDCloudISO {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
     param (
-        [Parameter(HelpMessage = "PowerShell version to include (format: X.Y.Z)")]
-        [ValidatePattern('^(\d+\.\d+\.\d+)$', ErrorMessage = "PowerShell version must be in format X.Y.Z with digits only")]
+        [Parameter(HelpMessage = "PowerShell version to include (format: X.Y.Z or X.Y.Z-tag)")]
+        [ValidatePattern('^(\d+\.\d+\.\d+(-\w+(\.\d+)?)?)$', ErrorMessage = "PowerShell version must be in format X.Y.Z with optional pre-release tag")]
         [string]$PwshVersion = "7.5.0",
 
         [Parameter(HelpMessage = "Output path for the ISO file")]

@@ -1,65 +1,34 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/powershell
 {
-	"name": "OSDCloud Custom Builder",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
-	"features": {
-		"ghcr.io/devcontainers/features/git-lfs:1": {},
-		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/stuartleeks/dev-container-features/add-host:1": {},
-		"ghcr.io/eliises/devcontainer-features/devcontainers-cli:1": {},
-		"ghcr.io/nikiforovall/devcontainer-features/dotnet-csharpier:1": {},
-		"ghcr.io/dhoeric/features/act:1": {}
-	},
-
-	"postCreateCommand": "sudo chsh vscode -s \"$(which pwsh)\"",
-	"postStartCommand": "git config --global core.autocrlf true && git config --global pull.rebase true",
-
-	"containerEnv": {
-		"OSDCLOUD_CACHE_PATH": "/home/vscode/OSDCloud",
-		"POWERSHELL_TELEMETRY_OPTOUT": "1",
-		"POWERSHELL_UPDATECHECK": "Off"
-	},
-
-	"customizations": {
-		"vscode": {
-			"settings": { 
-				"terminal.integrated.defaultProfile.linux": "pwsh",
-				"powershell.cwd": "/workspaces/OSDCloudCustomBuilder",
-				"editor.formatOnSave": true,
-				"files.trimTrailingWhitespace": true,
-				"powershell.scriptAnalysis.enable": true,
-				"powershell.pester.useLegacyCodeLens": false,
-				"powershell.integratedConsole.showOnStartup": true,
-				"powershell.startAutomatically": true,
-				"editor.bracketPairColorization.enabled": true,
-				"editor.guides.bracketPairs": true,
-				"files.associations": {
-					"*.ps1xml": "xml",
-					"*.psd1": "powershell",
-					"*.psm1": "powershell"
-				}
-			},
-			"extensions": [
-				"ms-vscode.powershell",
-				"redhat.vscode-yaml",
-				"streetsidesoftware.code-spell-checker",
-				"eamodio.gitlens",
-				"github.vscode-github-actions",
-				"ms-azuretools.vscode-docker",
-				"DavidAnson.vscode-markdownlint",
-				"yzhang.markdown-all-in-one",
-				"bierner.markdown-preview-github-styles",
-				"sourcegraph.cody-ai",
-				"danielsanmedium.dscodegpt",
-				"bito.bito",
-				"github.copilot-chat"
-			]
-		}
-	},
-
-	"forwardPorts": [8080],
-	"remoteUser": "vscode"
+    "name": "Ubuntu 22.04 DevContainer",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "runArgs": [
+        "--init",
+        "--privileged",
+        "-v", "/var/run/docker.sock:/var/run/docker.sock"
+    ],
+    "remoteUser": "vscode",
+    "settings": {
+        "terminal.integrated.defaultProfile.linux": "PowerShell",
+        "terminal.integrated.profiles.linux": {
+            "PowerShell": {
+                "path": "pwsh",
+                "icon": "terminal-powershell"
+            },
+            "bash": {
+                "path": "/bin/bash",
+                "icon": "terminal-bash"
+            }
+        }
+    },
+    "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-vscode.powershell",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.azurecli",
+        "amazonwebservices.aws-toolkit-vscode"
+    ],
+    "postCreateCommand": "new-item -ItemType Directory -Path ~/projects | Out-Null"
 }

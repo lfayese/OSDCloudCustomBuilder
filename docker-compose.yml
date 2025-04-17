@@ -1,0 +1,168 @@
+services:
+  cody_gateway:
+    container_name: cody_gateway
+    image: sourcegraph/cody-gateway
+    ports:
+    - 8081:8080
+    restart: unless-stopped
+  executor_vm:
+    container_name: sg_executor_vm
+    image: sourcegraph/executor-vm
+    restart: unless-stopped
+  fetch:
+    image: mcp/fetch
+    restart: unless-stopped
+  filesystem:
+    image: mcp/filesystem
+    restart: unless-stopped
+  gdrive:
+    image: mcp/gdrive
+    restart: unless-stopped
+  git:
+    image: mcp/git
+    restart: unless-stopped
+  github:
+    image: mcp/github
+    restart: unless-stopped
+  gitlab:
+    image: mcp/gitlab
+    restart: unless-stopped
+  grafana:
+    container_name: sg_grafana
+    image: sourcegraph/grafana
+    ports:
+    - 3000:3000
+    restart: unless-stopped
+  indexed_searcher:
+    container_name: sg_indexed_searcher
+    image: sourcegraph/indexed-searcher
+    restart: unless-stopped
+  initcontainer:
+    container_name: sg_initcontainer
+    image: sourcegraph/initcontainer
+    restart: unless-stopped
+  jaeger:
+    container_name: sg_jaeger
+    image: sourcegraph/jaeger-all-in-one
+    ports:
+    - 16686:16686
+    restart: unless-stopped
+  llama:
+    image: ai/llama3.2:latest
+    restart: unless-stopped
+  llama3:
+    image: ai/llama3.2:latest
+    restart: unless-stopped
+  localai:
+    image: localai/localai
+    ports:
+    - 8080:8080
+    restart: unless-stopped
+  mcp_everything:
+    image: mcp/everything
+    restart: unless-stopped
+  mcp_fetch:
+    image: mcp/fetch
+    restart: unless-stopped
+  mcp_filesystem:
+    image: mcp/filesystem
+    restart: unless-stopped
+  mcp_gdrive:
+    image: mcp/gdrive
+    restart: unless-stopped
+  mcp_git:
+    image: mcp/git
+    restart: unless-stopped
+  mcp_github:
+    image: mcp/github
+    restart: unless-stopped
+  mcp_gitlab:
+    image: mcp/gitlab
+    restart: unless-stopped
+  mcp_memory:
+    image: mcp/memory
+    restart: unless-stopped
+  mcp_postgres:
+    environment:
+      POSTGRES_PASSWORD: example
+    image: mcp/postgres
+    ports:
+    - 5433:5432
+    restart: unless-stopped
+  mcp_puppeteer:
+    image: mcp/puppeteer
+    restart: unless-stopped
+  mcp_sentry:
+    image: mcp/sentry
+    restart: unless-stopped
+  mcp_sequentialthinking:
+    image: mcp/sequentialthinking
+    restart: unless-stopped
+  mcp_sqlite:
+    image: mcp/sqlite
+    restart: unless-stopped
+  mcp_time:
+    image: mcp/time
+    restart: unless-stopped
+  memory:
+    image: mcp/memory
+    restart: unless-stopped
+  mistral:
+    image: ai/mistral:latest
+    restart: unless-stopped
+  node_exporter:
+    container_name: sg_node_exporter
+    image: sourcegraph/node-exporter
+    ports:
+    - 9100:9100
+    restart: unless-stopped
+  ollama:
+    image: ollama/ollama
+    ports:
+    - 11434:11434
+    restart: unless-stopped
+  otel_collector:
+    container_name: sg_otel_collector
+    image: sourcegraph/opentelemetry-collector
+    restart: unless-stopped
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: example
+    image: mcp/postgres
+    ports:
+    - 5432:5432
+    restart: unless-stopped
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+  puppeteer:
+    image: mcp/puppeteer
+    restart: unless-stopped
+  redis_cache:
+    container_name: sg_redis_cache
+    image: sourcegraph/redis-cache
+    ports:
+    - 6379:6379
+    restart: unless-stopped
+  search_indexer:
+    container_name: sg_search_indexer
+    image: sourcegraph/search-indexer
+    restart: unless-stopped
+  sentry:
+    image: mcp/sentry
+    restart: unless-stopped
+  sequentialthinking:
+    image: mcp/sequentialthinking
+    restart: unless-stopped
+  sourcegraph_toolbox:
+    container_name: sg_toolbox
+    image: sourcegraph/sourcegraph-toolbox
+    restart: unless-stopped
+  sqlite:
+    image: mcp/sqlite
+    restart: unless-stopped
+  time:
+    image: mcp/time
+    restart: unless-stopped
+version: '3.8'
+volumes:
+  pgdata: null

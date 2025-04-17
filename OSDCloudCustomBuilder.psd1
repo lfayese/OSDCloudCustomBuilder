@@ -1,4 +1,4 @@
-# Patched
+# Module manifest for OSDCloudCustomBuilder
 @{
     RootModule        = 'OSDCloudCustomBuilder.psm1'
     ModuleVersion     = '0.3.0'
@@ -8,18 +8,18 @@
     Copyright         = '(c) 2025 OSDCloud. All rights reserved.'
     Description       = 'Module for creating custom OSDCloud ISOs with Windows Image (WIM) files and PowerShell 7 support. Includes comprehensive error handling, logging, and configuration management.'
     PowerShellVersion = '5.1'
-FunctionsToExport = @(
-    'ConvertTo-OSDCloudDocumentation'
-    'Enable-OSDCloudTelemetry'
-    'Escape-Markdown'
-    'Export-ModuleMember'
-    'Get-TelemetryDefaults'
-    'New-CustomOSDCloudISO'
-    'Set-OSDCloudCustomBuilderConfig'
-    'Set-OSDCloudTelemetry'
-    'Update-CustomWimWithPwsh7'
-    'Write-Log'
-)
+    FunctionsToExport = @(
+        'ConvertTo-OSDCloudDocumentation'
+        'Enable-OSDCloudTelemetry'
+        'Escape-Markdown'
+        'Export-ModuleMember'
+        'Get-TelemetryDefaults'
+        'New-CustomOSDCloudISO'
+        'Set-OSDCloudCustomBuilderConfig'
+        'Set-OSDCloudTelemetry'
+        'Update-CustomWimWithPwsh7'
+        'Write-Log'
+    )
     CmdletsToExport   = @()
     VariablesToExport = @()
     AliasesToExport   = @(

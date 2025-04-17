@@ -99,6 +99,99 @@ function Invoke-OSDCloudLogger {
         }
         
         $debugEnabled = if ($config -and ($null -ne $config.DebugLogging)) {
+            $config.DebugLogging
+        }
+        else {
+            $DebugPreference -ne 'SilentlyContinue'
+        }
+    }
+    
+    process {
+        # Create timestamp for the log entry
+        $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff'
+        
+        # Format the log message
+        $logMessageText = "[$timestamp] [$Level] [$Component] $Message"
+        
+        # Add exception details if provided
+        if ($Exception) {
+            $logMessageText += "`nException: $($Exception.Message)`n$($Exception.StackTrace)"
+            if ($Exception.InnerException) {
+                $logMessageText += "`nInner Exception: $($Exception.InnerException.Message)`n$($Exception.InnerException.StackTrace)"
+            }
+        }
+        
+        # Add context if provided
+        if ($Context -and $Context.Count -gt 0) {
+            $contextDetails = ($Context.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }) -join ", "
+            $logMessageText += "`nContext: {$contextDetails}"
+        }
+        
+        # Write to console based on level unless NoConsole specified
+        if (-not $NoConsole) {
+            switch ($Level) {
+                'Info' {
+                    Write-Host $logMessageText
+                }
+                'Warning' {
+                    Write-Warning $Message
+                }
+                'Error' {
+                    Write-Error $Message
+                }
+                'Debug' {
+                    if ($debugEnabled) {
+                        Write-Debug $logMessageText 
+                    }
+                }
+                'Verbose' {
+                    if ($verboseEnabled) {
+                        Write-Verbose $logMessageText
+                    }
+                }
+                default {
+                    Write-Host $logMessageText
+                }
+            }
+        }
+        
+        # Write to log file - use mutex for thread safety if available
+        $mutexAcquired = $false
+        try {
+            if ($mutex) {
+                $mutex.WaitOne() | Out-Null
+                $mutexAcquired = $true
+            }
+            
+            # Append the log entry to the file
+            Add-Content -Path $currentLogFile -Value $logMessageText -ErrorAction Stop
+        }
+        catch {
+            Write-Warning "Failed to write to log file '$currentLogFile': $_"
+            try {
+                # Try to log to temp folder as fallback
+                $fallbackLog = Join-Path -Path $env:TEMP -ChildPath "OSDCloudCustomBuilder_fallback.log"
+                Add-Content -Path $fallbackLog -Value $logMessageText -ErrorAction SilentlyContinue
+                Add-Content -Path $fallbackLog -Value "Original logging error: $_" -ErrorAction SilentlyContinue
+            }
+            catch {
+                # If all else fails, we've at least attempted console output above
+            }
+        }
+        finally {
+            # Release mutex if acquired
+            if ($mutex -and $mutexAcquired) {
+                $mutex.ReleaseMutex()
+            }
+        }
+    }
+    
+    end {
+        # Clean up mutex if created in this instance
+        if ($mutex) {
+            $mutex.Dispose()
+        }
+    }
             $config.DebugLogging 
         }
         else {

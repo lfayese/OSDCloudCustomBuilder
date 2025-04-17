@@ -11,17 +11,46 @@ function Get-OSDCloudConfig {
     
     process {
         try {
-            # Return a clone of the configuration to prevent unintended modifications
-            "$configClone" = @{}
-            foreach ("$key" in $script:OSDCloudConfig.Keys) {
-                if ("$script":OSDCloudConfig[$key] -is [hashtable]) {
-                    "$configClone"[$key] = $script:OSDCloudConfig[$key].Clone()
+            # Check if configuration exists, initialize with defaults if not
+            if (-not (Get-Variable -Name OSDCloudConfig -Scope Script -ErrorAction SilentlyContinue)) {
+                # Initialize with default configuration
+                $script:OSDCloudConfig = @{
+                    LogFilePath = Join-Path -Path $env:TEMP -ChildPath "OSDCloudCustomBuilder.log"
+                    ISOOutputPath = "$env:USERPROFILE\Downloads"
+                    TelemetryEnabled = $false
+                    VerboseLogging = $false
+                    DebugLogging = $false
+                    PowerShell7Version = "7.5.0"
                 }
-                elseif ("$script":OSDCloudConfig[$key] -is [array]) {
-                    "$configClone"[$key] = $script:OSDCloudConfig[$key].Clone()
+                
+                # Try to load from config file if it exists
+                $configPath = Join-Path -Path $script:ModuleRoot -ChildPath "config.json"
+                if (Test-Path -Path $configPath) {
+                    try {
+                        $fileConfig = Get-Content -Path $configPath -Raw | ConvertFrom-Json
+                        
+                        # Override defaults with file settings
+                        foreach ($prop in $fileConfig.PSObject.Properties) {
+                            $script:OSDCloudConfig[$prop.Name] = $prop.Value
+                        }
+                    }
+                    catch {
+                        Invoke-OSDCloudLogger -Message "Failed to load configuration from $configPath. Using defaults." -Level Warning
+                    }
+                }
+            }
+            
+            # Return a clone of the configuration to prevent unintended modifications
+            $configClone = @{}
+            foreach ($key in $script:OSDCloudConfig.Keys) {
+                if ($script:OSDCloudConfig[$key] -is [hashtable]) {
+                    $configClone[$key] = $script:OSDCloudConfig[$key].Clone()
+                }
+                elseif ($script:OSDCloudConfig[$key] -is [array]) {
+                    $configClone[$key] = $script:OSDCloudConfig[$key].Clone()
                 }
                 else {
-                    "$configClone"[$key] = $script:OSDCloudConfig[$key]
+                    $configClone[$key] = $script:OSDCloudConfig[$key]
                 }
             }
             
